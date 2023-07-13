@@ -5,12 +5,16 @@ import { Todo } from '../models/todo';
 let todos:Todo[] =[];
 const router=Router();
 
+type RequestBody={text: string};
+type RequestParams={todoId: string};
+
 
 router.get('/',(req,res,next)=>{
     res.status(200).json({todos: todos})
 })
 
 router.post('/todo',(req,res,next)=>{
+    const body=req.body as RequestBody;
     const newTodo: Todo={
         id:new Date().toISOString(),
         text:req.body.text,
@@ -21,9 +25,11 @@ router.post('/todo',(req,res,next)=>{
 })
 
 
-router.put('/todo/:Id',(req,res,next)=>{
+router.put('/todo/:todoId',(req,res,next)=>{
     console.log("reaching here");
-    const id=req.params.Id;
+    const params=req.params as RequestParams;
+    const body=req.body as RequestBody;
+    const id=params.todoId;
     const index=todos.findIndex(todoItem => todoItem.id === id);
     
     if(index>=0){
@@ -33,9 +39,11 @@ router.put('/todo/:Id',(req,res,next)=>{
     return res.status(404).json({"message":"not found"});
 })
 
-router.delete('/todo/:id',(req,res,next)=>{
+router.delete('/todo/:todoId',(req,res,next)=>{
 
-    todos=todos.filter(todoItem=>todoItem.id !== req.params.id);
+    const body=req.body as RequestBody;
+    const params=req.params as RequestParams;
+    todos=todos.filter(todoItem=>todoItem.id !== params.todoId);
     res.status(200).json({"message":"success",todos: todos});
 })
 
